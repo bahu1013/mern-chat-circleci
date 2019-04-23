@@ -20,5 +20,12 @@ module.exports = {
         "react"
     ],
     "rules": {
+        "no-console": "off",
+        "no-script-url":"off",
+        "no-param-reassign":"off",
+        "no-use-before-define":"off",
+        "no-unused-expressions":"off",
+        "react/jsx-filename-extension":"off",
+        "no-undef":"off"
     }
 };
