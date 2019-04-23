@@ -3,9 +3,11 @@ jobs:
   build:
     docker:
       - image: circleci/node:10
+    working_directory: ~/mern-chat-circleci
     steps:
       - checkout
-      - run: npm start
+      - run: npm install
+      - run: npm test
   test:
     docker:
       - image: circleci/node:10
