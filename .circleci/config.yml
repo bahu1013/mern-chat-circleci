@@ -13,7 +13,6 @@ jobs:
       - image: circleci/node:10
     steps:
       - checkout
-      - run: ./node_modules/.bin/eslint --fix **/src/
 workflows:
   version: 2
   build_and_test:
