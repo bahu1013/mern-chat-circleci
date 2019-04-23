@@ -9,12 +9,25 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && mv build ./public/",
+    "lint": "eslint --format table --ext .js,.jsx .",
+    "lint:fix": "eslint --fix --format table --ext .js,.jsx .",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "devDependencies": {
+    "eslint": "^5.16.0",
+    "eslint-plugin-flowtype": "^3.6.1",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react-hooks": "^1.6.0",
+    "eslint-config-react-app": "^4.0.0",
+    "eslint-plugin-import": "^2.17.2",
+    "eslint-plugin-node": "^8.0.1",
+    "eslint-plugin-react": "^7.12.4",
+    "babel-eslint": "^10.0.1"
+  },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "airbnb"
   },
   "browserslist": {
     "production": [
