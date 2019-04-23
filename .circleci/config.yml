@@ -1,1 +1,20 @@
-
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - run: npm start
+  test:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - run: ./node_modules/.bin/eslint --fix **/src/
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - build
+      - test
