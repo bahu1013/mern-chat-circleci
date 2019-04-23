@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node index.js",
-    "pretest": "cd client && yarn test",
+    "pretest": "cd client && yarn test && npm run lint",
     "test": "echo `ESLint is complete`"
   },
   "dependencies": {

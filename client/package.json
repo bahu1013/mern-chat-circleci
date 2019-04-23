@@ -9,14 +9,14 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build && mv build ./public/",
-    "lint": "eslint --format table --ext .js,.jsx .",
-    "lint:fix": "eslint --fix --format table --ext .js,.jsx .",
+    "build": "react-scripts build",
+    "lint": "eslint src/**/*.js src/**/*.jsx",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
     "eslint-plugin-flowtype": "^3.6.1",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react-hooks": "^1.6.0",
