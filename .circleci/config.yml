@@ -16,9 +16,16 @@ jobs:
       - run: cd client && npm install
       - run: npm run pretest
       - run: npm run test
+  run:
+    docker:
+      - image: circleci/node:10
+    steps:
+      - checkout
+      - run: npm run dev
 workflows:
   version: 2.1
   build_and_test:
     jobs:
       - build
       - test
+      - run
