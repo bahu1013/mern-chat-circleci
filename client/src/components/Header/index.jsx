@@ -5,7 +5,6 @@ import { connect } from "react-redux";
 import {
   Collapse,
   Navbar,
-  NavbarToggler,
   NavbarBrand,
   Nav,
   NavItem,
@@ -17,7 +16,6 @@ import {
 } from 'reactstrap';
 
 import authActions from '../../actions/auth';
-// import './style.css';
 
 class Header extends Component {
     constructor(props) {
@@ -35,19 +33,6 @@ class Header extends Component {
         if (this.props.currentUser === null) {
             return <Redirect to="/login" />;
         }
-
-        const userLink = (
-            <ul className="navbar-nav">
-                <li className="nav-item">
-                    <Link to="/profile" className="nav-link">
-                        {this.props.currentUser ? this.props.currentUser.first_name : ''} {this.props.currentUser ? this.props.currentUser.last_name : ''}
-                    </Link>
-                </li>
-                <li className="nav-item">
-                    <a href="" onClick={this.logout} className="nav-link">Logout</a>
-                </li>
-            </ul>
-        );
 
         return (
             <div>
@@ -73,7 +58,7 @@ class Header extends Component {
                             </DropdownItem>
                             <DropdownItem divider />
                             <DropdownItem>
-                                <a href="" onClick={this.logout} className="nav-link">
+                                <a href="javascript;" onClick={this.logout} className="nav-link">
                                     <span className="icon fa fa-sign-out" />
                                     &nbsp;&nbsp;&nbsp;&nbsp;Logout
                                 </a>
