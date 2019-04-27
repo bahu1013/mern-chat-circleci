@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, withRouter, Redirect } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import {
@@ -32,7 +32,6 @@ class Header extends Component {
     render() { 
         if (this.props.currentUser === null) {
             this.props.history.push("/login");
-            // return <Redirect to="/login" />;
         }
 
         return (

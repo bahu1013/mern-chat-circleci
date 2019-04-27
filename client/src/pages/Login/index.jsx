@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, withRouter, Redirect } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import authActions from "../../actions/auth";
@@ -43,7 +43,6 @@ class Login extends Component {
     render() {
         if (this.props.authenticated && this.props.auth && this.props.auth.token && this.props.currentUser) {
             this.props.history.push("/");
-            // return <Redirect to="/" />;
         }
         return (
             <div className="login-form">    
