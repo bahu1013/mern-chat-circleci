@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, withRouter, Redirect } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import authActions from "../../actions/auth";
@@ -75,4 +75,4 @@ const mapDispatchToProps = dispatch => bindActionCreators({ ...authActions }, di
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Login);
+)(withRouter(Login));
