@@ -1,12 +1,41 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
+import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/lib/integration/react';
+import { Route, BrowserRouter, Switch } from 'react-router-dom';
+import { SecureRoute } from 'react-route-guard';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+import Welcome from './pages/Welcome';
+import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Profile from './pages/Profile';
+import Page404 from './pages/404';
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+import { StaffRouteGuard } from './services/routeGuard';
+import { persistor, store } from './store';
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+import './styles/bootstrap.css';
+import './styles/main.css';
+
+ReactDOM.render(
+    <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+            <BrowserRouter>
+                <div className="App">
+                    <Switch>
+                        <SecureRoute exact path='/' routeGuard={new StaffRouteGuard()} redirectToPathWhenFail='/login' render={() => <Welcome />} />
+                        <SecureRoute exact path='/dashboard' routeGuard={new StaffRouteGuard()} redirectToPathWhenFail='/login' render={() => <Dashboard />} />
+                        <SecureRoute exact path='/profile' routeGuard={new StaffRouteGuard()} redirectToPathWhenFail='/login' render={() => <Profile />} />
+                        <Route exact path='/login' render={() => <Login />} />
+                        <Route exact path='/register' render={() => <Register />} />
+                        <Route exact path='**' render={() => <Page404 />} />
+                    </Switch>
+                </div>
+            </BrowserRouter>
+        </PersistGate>
+    </Provider>,
+    document.getElementById('root')
+);

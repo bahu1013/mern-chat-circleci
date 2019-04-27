@@ -3,17 +3,32 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node index.js",
+    "client-install": "npm install --prefix client",
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "client": "npm start --prefix client",
     "pretest": "cd client && yarn test && npm run lint",
-    "test": "echo `ESLint is complete`"
+    "test": "echo `ESLint is complete`",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "NPM_CONFIG_PRODUCTION=false npm install --prefix client && npm run build --prefix client"
   },
   "dependencies": {
+    "bcrypt": "^3.0.6",
+    "config": "^3.1.0",
     "cookie-parser": "~1.4.3",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "express-handlebars": "^3.0.2",
     "http-errors": "~1.6.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.5.3",
     "morgan": "~1.9.0",
     "nodemon": "^1.18.11"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "client/*"
+    ]
   }
 }

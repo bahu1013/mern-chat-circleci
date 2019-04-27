@@ -1,0 +1,58 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  position: fixed;
+  /* background-color: #f36633; */
+  height: 50px;
+  z-index: 999;
+}
+.logo-link {
+    display: block;
+    margin-left: 25px;
+    width: 36px;
+    height: 36px;
+    overflow: hidden;
+    border-radius: 100%;
+}
+
+.right-area {
+    display: flex;
+    align-items: center;
+}
+
+.user-boxs {
+    display: block;
+    display: flex;
+    align-items: center;
+    border-right: 1px solid rgba(255,255,255,0.2);
+    padding-right: 22px;
+    padding-left: 15px;
+}
+.rights {
+    margin-left: 9px;
+}
+.user-name {
+    font-family: Arial;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    display: block;
+    line-height: 14px;
+    margin-bottom: -1px;
+}
+.login-out {
+    padding: 0 20px;
+}
+.txt {
+    font-size: 11px;
+    font-weight: 400;
+    color: #fff;
+}
+.btn-logout {
+    background-size: 19px auto;
+    width: 19px;
+    height: 18px;
+    vertical-align: middle;
+}
