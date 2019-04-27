@@ -2,6 +2,10 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "10.14.2",
+    "npm": "6.4.x"
+  },
   "dependencies": {
     "@material-ui/core": "^3.9.3",
     "axios": "^0.18.0",
