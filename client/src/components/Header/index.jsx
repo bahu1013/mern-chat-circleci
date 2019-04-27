@@ -31,7 +31,8 @@ class Header extends Component {
 
     render() { 
         if (this.props.currentUser === null) {
-            return <Redirect to="/login" />;
+            this.props.history.push("/login");
+            // return <Redirect to="/login" />;
         }
 
         return (

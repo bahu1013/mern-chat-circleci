@@ -42,7 +42,8 @@ class Login extends Component {
 
     render() {
         if (this.props.authenticated && this.props.auth && this.props.auth.token && this.props.currentUser) {
-            return <Redirect to="/" />;
+            this.props.history.push("/");
+            // return <Redirect to="/" />;
         }
         return (
             <div className="login-form">    
