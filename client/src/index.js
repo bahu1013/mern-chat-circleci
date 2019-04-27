@@ -2,7 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/lib/integration/react';
-import { Route, BrowserRouter, Switch } from 'react-router-dom';
+import {
+    Route, BrowserRouter, Switch, Redirect 
+} from 'react-router-dom';
 import { SecureRoute } from 'react-route-guard';
 
 import Welcome from './pages/Welcome';
@@ -20,20 +22,22 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/bootstrap.css';
 import './styles/main.css';
 
+const PrivateRoute = ({ component: Component, fallback, ...rest }) => (
+    <Route {...rest} render={props => (store.getState().login.authenticated ? <Component /> : <Redirect to={{ pathname: fallback, state: { from: props.location } }} />)} />
+);
+
 ReactDOM.render(
     <Provider store={store}>
         <PersistGate loading={null} persistor={persistor}>
             <BrowserRouter>
-                <div className="App">
                     <Switch>
-                        <SecureRoute exact path='/' routeGuard={new StaffRouteGuard()} redirectToPathWhenFail='/login' render={() => <Welcome />} />
-                        <SecureRoute exact path='/dashboard' routeGuard={new StaffRouteGuard()} redirectToPathWhenFail='/login' render={() => <Dashboard />} />
-                        <SecureRoute exact path='/profile' routeGuard={new StaffRouteGuard()} redirectToPathWhenFail='/login' render={() => <Profile />} />
+                        <PrivateRoute exact path='/' component={Welcome} fallback='/login' />
+                        <PrivateRoute exact path='/profile' component={Profile} fallback='/login' />
+                        <PrivateRoute exact path='/dashboard' component={Dashboard} fallback='/login' />
                         <Route exact path='/login' render={() => <Login />} />
                         <Route exact path='/register' render={() => <Register />} />
                         <Route exact path='**' render={() => <Page404 />} />
                     </Switch>
-                </div>
             </BrowserRouter>
         </PersistGate>
     </Provider>,
