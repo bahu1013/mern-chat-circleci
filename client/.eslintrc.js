@@ -53,6 +53,7 @@ module.exports = {
         "import/prefer-default-export": "off",
         "import/no-cycle": "off",
         "react/no-unused-state": "off",
-        "eslint-disable-next-line": "off"
+        "eslint-disable-next-line": "off",
+        "react/no-unescaped-entities": "off"
     }
 };
