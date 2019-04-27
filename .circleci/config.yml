@@ -21,10 +21,11 @@ jobs:
       - image: circleci/node:10
     steps:
       - checkout
+      - run: npm install concurrently
       - run: npm run dev
 workflows:
   version: 2.1
-  build_and_test:
+  build_and_test_and_run:
     jobs:
       - build
       - test
