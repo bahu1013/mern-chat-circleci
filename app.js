@@ -12,13 +12,14 @@ var usersRouter = require('./server/routes/users');
 
 var app = express();
 var mongoose = require('mongoose');
+var Chatkit = require('@pusher/chatkit-server');
 
 // view engine setup
 app.engine('hbs', hbs({extname: 'hbs', defaultLayout: 'layout', layoutsDir: __dirname + '/views/layouts/'}));
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-const config = require('config');
+const config = require('./server/config/default');
 
 app.use(bodyParser.json());
 app.use(cors());

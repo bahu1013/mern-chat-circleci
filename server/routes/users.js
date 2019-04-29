@@ -1,11 +1,19 @@
 const express = require('express');
 const router = express.Router();
 const cors = require('cors');
-const config = require('config');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
+const Chatkit = require('@pusher/chatkit-server');
 
+const config = require('../config/default');
 const User = require('../models/User');
+const constants = require('../constants/default');
+
+const chatkit = new Chatkit.default({
+  instanceLocator: config.CHAT_KIT.INSTANCELOCATOR,
+  key: config.CHAT_KIT.KEY
+});
+
 router.use(cors());
 
 router.post('/register', (req, res) => {
@@ -13,32 +21,58 @@ router.post('/register', (req, res) => {
 	const userData = {
 		first_name: req.body.first_name,
 		last_name: req.body.last_name,
+		chat_id: req.body.chat_id,
 		email: req.body.email,
 		password: req.body.password,
 		created: today
 	};
 	User.findOne({
-		email: req.body.email
+		chat_id: req.body.chat_id
 	})
 	.then(user => {
 		if (!user) {
-			bcrypt.hash(req.body.password, 10, (err, hash) => {
-				userData.password = hash;
-				User.create(userData)
-				.then(user => {
-					res.json({status: user.email + ' registered'});
-				})
-				.catch(err => {
-					res.send('error: ' + err);
-				});
+			User.findOne({
+				email: req.body.email
+			})
+			.then(user => {
+				if (!user) {
+					chatkit.createUser({
+						id: userData.chat_id,
+						name: userData.chat_id
+					})
+					.then(() => {
+						bcrypt.hash(req.body.password, 10, (err, hash) => {
+							userData.password = hash;
+							User.create(userData)
+							.then(user => {
+								res.send({result: constants.RESPONSE.SUCCESS});
+							})
+							.catch(err => {
+								res.status(err.status).send({result: err});
+							});
+						});
+					})
+					.catch(error => {
+						if (error.error === 'services/chatkit/user_already_exists') {
+							res.send({result: constants.RESPONSE.USERS.CHAT_ID_REPEAT});
+						} else {
+							res.status(error.status).send({result: error});
+						}
+					});
+				} else {
+					res.send({result: constants.RESPONSE.USERS.USER_REPEAT});
+				}
+			})
+			.catch(err => {
+				res.status(err.status).send({result: err});
 			});
 		} else {
-			res.json({error: 'User already exists'});
+			res.send({result: constants.RESPONSE.USERS.CHAT_ID_REPEAT});
 		}
 	})
 	.catch(err => {
-		res.send('error: ' + err);
-	});
+		res.send({result: err});
+	});	
 });
 
 router.post('/login', (req, res) => {
@@ -57,17 +91,28 @@ router.post('/login', (req, res) => {
 				let token = jwt.sign(payload, config.jwt.SECRET, {
 					expiresIn: config.jwt.TOKEN_EXPIRY_TIME
 				});
-				res.send(token);
+				const authData = chatkit.authenticate({ userId: user.chat_id });
+				res.status(authData.status).send({
+					token,
+					result: constants.RESPONSE.SUCCESS,
+					chat_token: authData.body.access_token,
+					user
+				});
 			} else {
-				res.json({ error: "User does not exist" });
+				res.send({ result: constants.RESPONSE.USERS.INVALID_EMAIL_PASSWORD });
 			}
 		} else {
-			res.json({ error: "User does not exist" });
+			res.send({ result: constants.RESPONSE.USERS.INVALID_EMAIL_PASSWORD });
 		}
 	})
 	.catch(err => {
-		res.send('error: ' + err);
+		res.status(err.status).send({result: err});
 	});
+});
+
+router.post('/authenticate', (req, res) => {
+	const authData = chatkit.authenticate({ userId: req.query.user_id });
+	res.status(authData.status).send(authData.body);
 });
 
 router.get('/profile', (req, res) => {
@@ -79,11 +124,11 @@ router.get('/profile', (req, res) => {
 		if (user) {
 			res.json(user);
 		} else {
-			res.send("User does not exist");
+			res.send({result: constants.RESPONSE.USERS.NOT_EXIST});
 		}
 	})
 	.catch(err => {
-		res.send('error ' + err);
+		res.send({result: err});
 	});
 });
 
@@ -98,7 +143,7 @@ router.post('/profile', (req, res) => {
 
 				user.save(err => {
 					if (err) {
-						console.log('error');
+						res.status(err.status).send({result: constants.RESPONSE.USERS.UPDATE_PROFILE_ERROR});
 					} else {
 						const payload = {
 							_id: user._id,
@@ -107,9 +152,15 @@ router.post('/profile', (req, res) => {
 							email: user.email
 						};
 						let token = jwt.sign(payload, config.jwt.SECRET, {
-							expiresIn: 1440
+							expiresIn: config.jwt.TOKEN_EXPIRY_TIME
 						});
-						res.send({ token, user });
+						const authData = chatkit.authenticate({ userId: user.chat_id });
+						res.send({
+							token,
+							result: constants.RESPONSE.SUCCESS,
+							chat_token: authData.body.access_token,
+							user
+						});
 					}
 				});
 			} else if (req.body.current_password != undefined) {
@@ -118,19 +169,17 @@ router.post('/profile', (req, res) => {
 						user.password = hash;
 						user.save(err => {
 							if (err) {
-								console.log('error');
+								res.status(err.status).send({result: constants.RESPONSE.UERS.UPDATE_PROFILE_ERROR});
 							} else {
-								res.send({ token: req.body.token, user });
+								res.send({ result: constants.RESPONSE.SUCCESS });
 							}
 						});
 					});
 				} else {
-					const payload = { user, token: req.body.token, error: "Current password is wrong." };
+					const payload = { result: constants.RESPONSE.USERS.CURRENT_PASSWORD_WRONG };
 					res.send(payload);
 				}
 			}
-		} else {
-			console.log('No such user');
 		}
 	});
 });

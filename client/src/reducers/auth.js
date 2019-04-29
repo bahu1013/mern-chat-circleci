@@ -56,8 +56,10 @@ export default (state = defaultState, action) => {
     case `${UPDATE_PROFILE}_SUCCEEDED`:
       return {
         ...state,
-        auth: { token: action.payload.token },
-        currentUser: action.payload.user
+        auth: { token: action.payload.token, chat_token: action.payload.chat_token },
+        currentUser: action.payload.user,
+        updateProfileStarted: false,
+        updateProfileDone: true
       };
     case `${UPDATE_PASSWORD}_STARTED`:
       return {
@@ -75,14 +77,13 @@ export default (state = defaultState, action) => {
     case `${UPDATE_PASSWORD}_SUCCEEDED`:
       return {
         ...state,
-        auth: { token: action.payload.token },
-        currentUser: action.payload.user,
-        pwdChangeError: action.payload.error
+        pwdChangeError: action.payload.result,
+        updatePasswordDone: true
       };
     case `${LOGIN}_SUCCEEDED`:
       return {
         ...state,
-        auth: { token: action.payload }
+        auth: { token: action.payload.token, chat_token: action.payload.chat_token }
       };
     case `${REGISTER}_SUCCEEDED`:
     case `${CLEAR_LOGIN}_SUCCEEDED`:

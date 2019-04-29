@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+
 import authActions from "../../actions/auth";
+import RESPONSE from '../../constants/responses';
 
 import './style.css';
 
@@ -12,9 +14,7 @@ class Login extends Component {
         this.state = {
             email: '',
             password: '',
-            showEmailError: false,
-            showPasswordError: false,
-            loginSuccess: false,
+            message: '',
         };
         this.onChange = this.onChange.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
@@ -23,9 +23,7 @@ class Login extends Component {
     onChange(e) {
         this.props.clearLogin();
         this.setState({ 
-            [e.target.name]: e.target.value,
-            showEmailError: false,
-            showPasswordError: false
+            [e.target.name]: e.target.value
         });
     }
 
@@ -34,9 +32,15 @@ class Login extends Component {
         this.props.clearLogin();
 
         this.props.Login(this.state.email, this.state.password).then(res => {
-            this.props.LoadMe();
-        }).catch(err => {
-            console.log(err);
+            if (res.result === RESPONSE.SUCCESS) {
+                this.props.LoadMe();
+            } else if (res.result === RESPONSE.USERS.INVALID_EMAIL_PASSWORD) {
+                this.setState({
+                    message: "Invalid email or password.",
+                });
+            } else {
+                this.setState({ message: res.result });
+            }
         });
     }
 
@@ -61,6 +65,7 @@ class Login extends Component {
                             <input type="password" className="form-control" name="password" onChange={this.onChange} value={this.state.password} placeholder="Password" required="required" />
                         </div>
                     </div>
+                    {this.state.message ? <span style={{ color: "red" }}>{this.state.message}<br /></span> : <span />}
                     <input type="submit" className="btn btn-primary btn-block btn-lg" value="Login" />
                 </form>
                 <div className="text-center small">Don't have an account? <Link to="/register" className="nav-link">Sign up</Link></div>

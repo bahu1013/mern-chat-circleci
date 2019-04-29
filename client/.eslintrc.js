@@ -54,6 +54,8 @@ module.exports = {
         "import/no-cycle": "off",
         "react/no-unused-state": "off",
         "eslint-disable-next-line": "off",
-        "react/no-unescaped-entities": "off"
+        "react/no-unescaped-entities": "off",
+        "react/no-access-state-in-setstate": "off",
+        "react/no-array-index-key": "off",
     }
 };

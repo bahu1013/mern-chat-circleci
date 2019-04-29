@@ -2,10 +2,13 @@ import React, { Component } from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { withRouter } from 'react-router-dom';
+
 import authActions from "../../actions/auth";
-import './style.css';
+import RESPONSE from '../../constants/responses';
 
 import Header from '../../components/Header';
+
+import './style.css';
 
 class Profile extends Component {
     constructor(props) {
@@ -13,12 +16,14 @@ class Profile extends Component {
         this.state = {
             first_name: '',
             last_name: '',
+            chat_id: '',
             email: '',
             current_password: '',
             new_password: '',
             confirm_password: '',
-            password_confirmed: true,
-            current_password_wrong: false
+            message: '',
+            pwd_message: '',
+            pwd_updated: false,
         };
         this.onChange = this.onChange.bind(this);
         this.onSubmitPwd = this.onSubmitPwd.bind(this);
@@ -29,6 +34,7 @@ class Profile extends Component {
         this.setState({
             first_name: this.props.currentUser.first_name,
             last_name: this.props.currentUser.last_name,
+            chat_id: this.props.currentUser.chat_id,
             email: this.props.currentUser.email
         });
     }
@@ -41,8 +47,8 @@ class Profile extends Component {
         e.preventDefault();
 
         if (this.state.new_password !== this.state.confirm_password) {
-            this.setState({ password_confirmed: false });
-            window.location.reload();
+            this.setState({ pwd_message: "New password is not confirmed." });
+            return;
         }
         
         const passwords = {
@@ -51,12 +57,15 @@ class Profile extends Component {
         };
 
         this.props.UpdateUserPassword(passwords, this.props.currentUser._id, this.props.auth.token).then(res => {
-            if (this.props.pwdChangeError !== undefined) {
-                this.setState({ current_password_wrong: true });
+            if (this.props.pwdChangeError === RESPONSE.SUCCESS) {
+                this.setState({ pwd_updated: true });
+                this.setState({ pwd_message: "Password was successfuly updated." });
+                this.props.history.push(`/profile`);
+            } else if (this.props.pwdChangeError === RESPONSE.USERS.CURRENT_PASSWORD_WRONG) {
+                this.setState({ pwd_message: "You entered wrong current password." });
             } else {
-                window.location.reload();
+                this.setState({ pwd_message: this.props.pwdChangeError });
             }
-            this.props.history.push(`/profile`);
         });
     }
 
@@ -71,7 +80,12 @@ class Profile extends Component {
         };
 
         this.props.UpdateUserProfile(updatedUser).then(res => {
-            this.props.history.push(`/profile`);
+            if (res.result === RESPONSE.SUCCESS) {
+                this.setState({ message: "Successfully updated." });
+                this.props.history.push(`/profile`);
+            } else {
+                this.setState({ message: res.result });
+            }
         });
     }
 
@@ -100,7 +114,7 @@ class Profile extends Component {
                                                             <span className="input-group-addon">
                                                                 <i className="fa fa-info" />
                                                             </span>
-                                                            <input type="text" name="first_name" className="form-control" onChange={this.onChange} value={this.state.first_name} />
+                                                            <input type="text" name="first_name" className="form-control" onChange={this.onChange} value={this.state.first_name} required />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -111,7 +125,18 @@ class Profile extends Component {
                                                             <span className="input-group-addon">
                                                                 <i className="fa fa-info" />
                                                             </span>
-                                                            <input type="text" name="last_name" className="form-control" onChange={this.onChange} value={this.state.last_name} />
+                                                            <input type="text" name="last_name" className="form-control" onChange={this.onChange} value={this.state.last_name} required />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="form-group">
+                                                    <label className="col-sm-3 control-label">Chat ID</label>
+                                                    <div className="col-sm-9">
+                                                        <div className="input-group">
+                                                            <span className="input-group-addon">
+                                                                <i className="fa fa-info" />
+                                                            </span>
+                                                            <input type="text" name="chat_id" className="form-control" value={this.state.chat_id} readOnly />
                                                         </div>
                                                     </div>
                                                 </div>
@@ -122,10 +147,14 @@ class Profile extends Component {
                                                             <span className="input-group-addon">
                                                                 <i className="fa fa-info" />
                                                             </span>
-                                                            <input type="email" name="email" className="form-control" onChange={this.onChange} value={this.state.email} />
+                                                            <input type="email" name="email" className="form-control" onChange={this.onChange} value={this.state.email} required />
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div className="form-group">
+                                                    <label className="col-sm-3 control-label" />
+                                                    <span className="col-sm-9" style={{ color: this.state.message !== RESPONSE.SUCCESS ? "green" : "red" }}>{this.state.message}</span>
+                                                </div> 
                                                 <button type="submit" className="btn btn-primary pull-right">Update</button>
                                             </div>
                                         </div>
@@ -151,18 +180,6 @@ class Profile extends Component {
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                {this.state.current_password_wrong === true ? (
-                                                    <div className="form-group">
-                                                        <label className="col-sm-3 control-label" />
-                                                        <div className="col-sm-9">
-                                                            <div className="input-group">
-                                                                <span>{this.props.pwdChangeError}</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ) : <span />}                                            
-
                                                 <div className="form-group">
                                                     <label htmlFor="new_password" className="col-sm-3 control-label">New password:</label>
                                                     <div className="col-sm-9">
@@ -185,16 +202,10 @@ class Profile extends Component {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {this.state.password_confirmed === false ? (
-                                                    <div className="form-group">
-                                                        <label className="col-sm-3 control-label" />
-                                                        <div className="col-sm-9">
-                                                            <div className="input-group">
-                                                                <span>Password is mismathced.</span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                ) : <span /> }
+                                                <div className="form-group">
+                                                    <label className="col-sm-3 control-label" />
+                                                    <span className="col-sm-9" style={{ color: this.state.pwd_updated === true ? "green" : "red" }}>{this.state.pwd_message}</span>
+                                                </div>
                                                 <button type="submit" className="btn btn-primary pull-right">Update</button>
                                             </div>
                                         </div>

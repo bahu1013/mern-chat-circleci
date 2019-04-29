@@ -17,6 +17,7 @@ export default class AuthSvc {
         return http(false).post('/users/register', {
             first_name: newUser.first_name,
             last_name: newUser.last_name,
+            chat_id: newUser.chat_id,
             email: newUser.email,
             password: newUser.password
         });

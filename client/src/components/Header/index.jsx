@@ -39,11 +39,6 @@ class Header extends Component {
                 <Navbar color="light" light expand="md">
                 <NavbarBrand href="/">LOGO</NavbarBrand>
                 <Collapse navbar>
-                    <Nav className="ml-auto" navbar>
-                        <NavItem>
-                            <NavLink href="/dashboard/">Dashboard</NavLink>
-                        </NavItem>
-                    </Nav>
                     <Nav className="pull-right" navbar>
                         <UncontrolledDropdown nav inNavbar className="pull-right">
                             <DropdownToggle nav caret>
