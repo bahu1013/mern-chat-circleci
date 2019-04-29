@@ -1,0 +1,15 @@
+// response messages & results
+
+const RESPONSE = {
+    SUCCESS: "SUCCESS",
+    USERS: {
+        UPDATE_PROFILE_ERROR: "UPDATE_PROFILE_ERROR",
+        USER_REPEAT: "USER_ALEADY_EXIST",
+        CHAT_ID_REPEAT: "CHAT_ID_REPEAT",
+        INVALID_EMAIL_PASSWORD: "INVALID_EMAIL_PASSWORD",
+        CURRENT_PASSWORD_WRONG: "CURRENT_PASSWORD_WRONG",
+        NOT_EXIST: "NOT_EXIST",
+    }    
+};
+
+export default RESPONSE;
